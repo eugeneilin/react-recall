@@ -17,11 +17,16 @@ for (let i = 65; i < 75; i++) {
 export default class Game extends Component {
   constructor() {
     super();
+
     this.state = {
       currentScore: 0,
       topScore: 0,
       items,
+      gameOver: false,
     };
+
+    this.handleAnswer = this.handleAnswer.bind(this);
+    this.handlePlayAgain = this.handlePlayAgain.bind(this);
   }
 
   randItemIndex() {
@@ -29,23 +34,19 @@ export default class Game extends Component {
     return rand;
   }
 
-  handleAnswer(e, index, answer) {
-    // Compare item.displayed to answer
-    this.props.handleScore(this.state.items[index].displayed === answer);
+  handleAnswer(e, item, index, answer) {
+    this.handleScore(item.displayed === answer);
 
-    // Change the item that is displayed
-    // If the displayed item hasn't been displayed before, change displayed property to true
-    if (!this.state.items[index].displayed) {
-      const items = this.state.items.map((item) => {
-        if (item.displayed) {
-          return item;
-        } else {
-          item.displayed = true;
-          return item;
-        }
-      });
-      this.setState({ items });
-    }
+    const items = this.state.items.map((i) => {
+      if (i === item) {
+        i.displayed = true;
+        return i;
+      } else {
+        return i;
+      }
+    });
+
+    this.setState({ items });
   }
 
   handleScore(increment) {
@@ -56,20 +57,47 @@ export default class Game extends Component {
     } else {
       this.setState({
         currentScore: 0,
+        topScore:
+          this.state.currentScore > this.state.topScore
+            ? this.state.currentScore
+            : this.state.topScore,
+        items: this.state.items.map((i) => {
+          i.displayed = false;
+          return i;
+        }),
+        gameOver: true,
       });
     }
   }
 
+  handlePlayAgain() {
+    this.setState({
+      currentScore: 0,
+      topScore: this.state.topScore,
+      items: this.state.items.map((i) => {
+        i.displayed = false;
+        return i;
+      }),
+      gameOver: false,
+    });
+  }
+
   render() {
-    const { currentScore, topScore, items } = this.state;
+    const { currentScore, topScore, items, gameOver } = this.state;
     const index = this.randItemIndex();
     const item = items[index];
 
     return (
       <main className='container'>
         <Scoreboard currentScore={currentScore} topScore={topScore} />
-        <Prompt item={item} handleAnswer={this.handleAnswer} index={index} />
-        <Item id={index} items={item.content} />
+        <Prompt
+          gameOver={gameOver}
+          item={item}
+          handleAnswer={this.handleAnswer}
+          handlePlayAgain={this.handlePlayAgain}
+          index={index}
+        />
+        <Item id={index} item={item.content} gameOver={gameOver} />
       </main>
     );
   }

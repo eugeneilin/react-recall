@@ -15,6 +15,12 @@
   --dark-color: #34495e;
 }
 
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 body {
   background-color: var(--dark-color);
   font-family: 'Roboto', sans-serif;
@@ -28,14 +34,13 @@ header {
   color: var(--dark-color);
 }
 
-main {
-  min-height: 75vh;
-}
-
 footer {
   background-color: var(--primary-color);
   padding: 1rem;
   text-align: center;
+  margin-top: auto;
+  display: block;
+  position: relative;
 }
 
 h1 {
@@ -61,4 +66,15 @@ a:hover {
 .container {
   padding-left: 10%;
   padding-right: 10%;
+}
+
+.d-none {
+  display: none;
+}
+
+@media only screen and (min-width: 768px) {
+  .container {
+    padding-left: 25%;
+    padding-right: 25%;
+  }
 }

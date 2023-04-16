@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 
 export default class Item extends Component {
   render() {
-    const { items } = this.props;
+    const { item, gameOver } = this.props;
 
-    return <div id='item'>{items}</div>;
+    return (
+      <div id='item' className={gameOver ? 'd-none' : ''}>
+        {item}
+      </div>
+    );
   }
 }
