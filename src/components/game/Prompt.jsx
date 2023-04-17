@@ -1,13 +1,22 @@
 import React, { Component } from 'react';
+import Footer from '../Footer';
 
 export default class Prompt extends Component {
   render() {
-    const { item, handleAnswer, handlePlayAgain, index, gameOver } = this.props;
+    const { item, handleAnswer, handlePlayAgain, index, gameOver, resetScore } = this.props;
 
     return (
       <div id='prompt'>
         {gameOver ? (
-          <div>
+          <>
+            <button
+              id='game-over-reset-score'
+              onClick={() => {
+                resetScore();
+              }}
+            >
+              Reset Score
+            </button>
             <h2 id='game-over'>Game Over!</h2>
             <button
               onClick={() => {
@@ -16,10 +25,11 @@ export default class Prompt extends Component {
             >
               Play again
             </button>
-          </div>
+            <Footer />
+          </>
         ) : (
           <div>
-            <h2>Have you seen this before?</h2>
+            <h3>Have you seen this letter before?</h3>
             <div>
               <button
                 onClick={(e) => {

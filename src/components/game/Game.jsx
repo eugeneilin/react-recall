@@ -6,7 +6,7 @@ import './game.css';
 
 const items = [];
 
-for (let i = 65; i < 75; i++) {
+for (let i = 65; i <= 90; i++) {
   items.push({
     id: i,
     content: String.fromCharCode(i),
@@ -20,13 +20,14 @@ export default class Game extends Component {
 
     this.state = {
       currentScore: 0,
-      topScore: 0,
+      topScore: localStorage.getItem('Top Score') || 0,
       items,
       gameOver: false,
     };
 
     this.handleAnswer = this.handleAnswer.bind(this);
     this.handlePlayAgain = this.handlePlayAgain.bind(this);
+    this.resetScore = this.resetScore.bind(this);
   }
 
   randItemIndex() {
@@ -55,8 +56,9 @@ export default class Game extends Component {
         currentScore: this.state.currentScore + 1,
       });
     } else {
+      console.log('Current Score: ' + this.state.currentScore);
+      console.log('Top Score before setState: ' + this.state.topScore);
       this.setState({
-        currentScore: 0,
         topScore:
           this.state.currentScore > this.state.topScore
             ? this.state.currentScore
@@ -67,6 +69,8 @@ export default class Game extends Component {
         }),
         gameOver: true,
       });
+      localStorage.setItem('Top Score', this.state.currentScore); // currentScore is the new topScore ?
+      console.log('Top Score: ' + this.state.currentScore);
     }
   }
 
@@ -80,6 +84,14 @@ export default class Game extends Component {
       }),
       gameOver: false,
     });
+  }
+
+  resetScore() {
+    this.setState({
+      currentScore: 0,
+      topScore: 0,
+    });
+    localStorage.setItem('Top Score', 0); // Why is this rerendering the Item component?
   }
 
   render() {
@@ -96,8 +108,9 @@ export default class Game extends Component {
           handleAnswer={this.handleAnswer}
           handlePlayAgain={this.handlePlayAgain}
           index={index}
+          resetScore={this.resetScore}
         />
-        <Item id={index} item={item.content} gameOver={gameOver} />
+        <Item id={index} item={item.content} gameOver={gameOver} resetScore={this.resetScore} />
       </main>
     );
   }
