@@ -20,7 +20,7 @@ export default class Game extends Component {
 
     this.state = {
       currentScore: 0,
-      topScore: localStorage.getItem('Top Score') || 0,
+      topScore: Number(localStorage.getItem('Top Score')) || 0,
       items,
       gameOver: false,
     };
@@ -31,9 +31,14 @@ export default class Game extends Component {
   }
 
   randItemIndex() {
-    let rand = Math.floor(Math.random() * this.state.items.length);
+    const rand = Math.floor(Math.random() * this.state.items.length);
     return rand;
   }
+
+  // new index is generated....
+  // when mounts
+  // then when randomIndex is called
+  // also in handleAnswer
 
   handleAnswer(e, item, index, answer) {
     this.handleScore(item.displayed === answer);
@@ -56,21 +61,26 @@ export default class Game extends Component {
         currentScore: this.state.currentScore + 1,
       });
     } else {
-      console.log('Current Score: ' + this.state.currentScore);
-      console.log('Top Score before setState: ' + this.state.topScore);
-      this.setState({
-        topScore:
-          this.state.currentScore > this.state.topScore
-            ? this.state.currentScore
-            : this.state.topScore,
-        items: this.state.items.map((i) => {
-          i.displayed = false;
-          return i;
-        }),
-        gameOver: true,
+      const topScore =
+        this.state.currentScore > this.state.topScore
+          ? this.state.currentScore
+          : this.state.topScore;
+      const items = this.state.items.map((i) => {
+        i.displayed = false;
+        return i;
       });
-      localStorage.setItem('Top Score', this.state.currentScore); // currentScore is the new topScore ?
-      console.log('Top Score: ' + this.state.currentScore);
+
+      this.setState(
+        {
+          topScore: topScore,
+
+          items: items,
+          gameOver: true,
+        },
+        () => {
+          localStorage.setItem('Top Score', this.state.topScore);
+        }
+      );
     }
   }
 
@@ -87,11 +97,11 @@ export default class Game extends Component {
   }
 
   resetScore() {
+    localStorage.setItem('Top Score', 0);
     this.setState({
       currentScore: 0,
       topScore: 0,
     });
-    localStorage.setItem('Top Score', 0); // Why is this rerendering the Item component?
   }
 
   render() {
